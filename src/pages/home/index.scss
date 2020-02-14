@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  padding: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  >fieldset {
+    width: 40%;
+    textarea {
+      width: 90%;
+      min-height: 150px;
+      padding: 5px;
+    }
+  }
+}
+.words-wrapper-flex {
+  display: flex;
+  flex-wrap: wrap;
+  .minus-word {
+    padding: 2px 5px;
+  }
+}
