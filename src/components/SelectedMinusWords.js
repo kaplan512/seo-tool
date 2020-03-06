@@ -20,11 +20,12 @@ class SelectedMinusWords extends Component {
             />
         )
         return (
-            <div>
-                <div>
+            <fieldset>
+                <legend>Минус слова</legend>
+                <div className="words-wrapper-flex">
                     {minusWords}
                 </div>
-            </div>
+            </fieldset>
         )
     }
 }

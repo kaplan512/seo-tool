@@ -16,6 +16,18 @@ export const collectMinusReducer = (state = [], action) => {
                 state = [...state, action.payload]
             }
             return state;
+            break;
+        case 'REMOVE_MINUS_WORD':
+            if (state.includes(action.payload)) {
+                let copy = [...state]
+                const index = state.indexOf(action.payload)
+                copy.splice(index, 1)
+                state = [...copy]
+            } else {
+                return state;
+            }
+            return state;
+            break;
         default:
             return state;
     }

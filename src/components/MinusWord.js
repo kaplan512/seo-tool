@@ -4,8 +4,10 @@ import PropTypes from 'prop-types';
 const Word = (props) => {
     const {
         onClicked,
-        name
+        name,
+        wordAction
     } = props;
+
 
     return (
         <div
@@ -19,7 +21,8 @@ const Word = (props) => {
 
 Word.propTypes = {
     onClicked: PropTypes.func,
-    name: PropTypes.string
+    name: PropTypes.string,
+    wordAction: PropTypes.string
 };
 
 export {Word};

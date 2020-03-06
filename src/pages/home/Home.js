@@ -40,9 +40,11 @@ class Home extends Component {
                             isDisable={isDisable}
                         />
                     </fieldset>
-                    <SelectMinusWords/>
+                    <SelectMinusWords action="add"/>
                 </div>
-                <SelectedMinusWords/>
+                <div className="wrapper">
+                    <SelectMinusWords action="remove"/>
+                </div>
             </div>
 
         )

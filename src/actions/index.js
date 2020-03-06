@@ -15,8 +15,16 @@ export const addText = (text) => {
     }
 }
 export const addMinusWord = (text) => {
+    console.log({text})
     return {
         type: 'ADD_MINUS_WORD',
+        payload: text
+    }
+}
+export const removeMinusWord = (text) => {
+    console.log({text})
+    return {
+        type: 'REMOVE_MINUS_WORD',
         payload: text
     }
 }
