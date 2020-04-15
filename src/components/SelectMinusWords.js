@@ -1,38 +1,40 @@
 import React, {Component} from "react"
 import { connect } from "react-redux";
-import {Word} from './MinusWord'
-import {addMinusWord, removeMinusWord} from '../actions/index'
+import WordString from './WordString'
+import {Textarea} from "./common";
 
 class SelectMinusWords extends Component {
     constructor(props) {
         super(props)
-    }
-    selectWord = (word) => () => {
-        if (this.props.action === 'add') {
-            console.log('dispatch from component')
-            this.props.dispatch(addMinusWord(word))
-        } else {
-            console.log('dispatch from component second')
-            this.props.dispatch(removeMinusWord(word))
+        this.state = {
+            text: ''
         }
     }
+    handleChange = (e) => {
+        this.setState({
+            text: e.target.value
+        });
+    };
 
     render() {
-        const splittedWords = this.props.action === 'add' ? this.props.state.text.split(' ') : this.props.state.minusWords
-        const words = splittedWords.map((item, index) =>
-            <Word
+        const lines = this.props.action === 'add' ? this.props.state.text : this.props.state.minusWords
+        const linesToRender = lines.map((item, index) =>
+            <WordString
                 key={index}
-                onClicked={this.selectWord}
-                name={item}
-                wordAction={this.props.action}
+                line={item}
+                action={this.props.action}
             />
         )
         const title = this.props.action === 'add' ? 'Кликай по минус словам' : 'Минус слова'
+        let isTextArea = this.props.textarea  ? <Textarea title='test' onChanged={this.handleChange}/> : null
         return (
             <fieldset>
                 <legend>{title} {this.props.action}</legend>
-                <div className='words-wrapper-flex'>
-                    {words}
+                <div className='words-wrapper-block'>
+                    {linesToRender}
+                </div>
+                <div>
+                    {isTextArea}
                 </div>
             </fieldset>
         )

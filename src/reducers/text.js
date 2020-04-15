@@ -1,4 +1,4 @@
-export const textReducer = (state = '', action) => {
+export const textReducer = (state = [], action) => {
     switch (action.type) {
         case 'ADD_TEXT':
             return state = action.payload;

@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+.red {
+  color: red;
+  background: lightpink;
+}
+.minus-word {
+  margin: 2px;
+  padding: 5px 10px;
+  border-radius: 15px;
+}

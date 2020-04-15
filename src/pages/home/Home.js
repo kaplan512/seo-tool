@@ -10,17 +10,30 @@ class Home extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            text: ''
+            text: []
         };
     }
     handleChange = (e) => {
+        let text = e.target.value.split('\n')
         this.setState({
-            text: e.target.value
+            text: text
         });
     };
     collectWords = () => {
-        this.props.dispatch(addText(this.state.text))
-        // this.props.dispatch({type: 'ADD_TEXT', payload: e.target.value})
+        // let result = this.state.text.filter((line) => {
+        //     if (line.trim()) {
+        //         return line.trim()
+        //     }
+        // })
+        let result = []
+        for (let i of this.state.text) {
+            let item = i.trim()
+            if (item) {
+                result.push(item)
+            }
+        }
+        console.log(result)
+        this.props.dispatch(addText(result))
     };
 
     render() {
@@ -40,10 +53,10 @@ class Home extends Component {
                             isDisable={isDisable}
                         />
                     </fieldset>
-                    <SelectMinusWords action="add"/>
+                    <SelectMinusWords action="add" textarea={false}/>
                 </div>
                 <div className="wrapper">
-                    <SelectMinusWords action="remove"/>
+                    <SelectMinusWords action="remove" textarea={true}/>
                 </div>
             </div>
 

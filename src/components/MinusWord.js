@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux'
 
 const Word = (props) => {
     const {
@@ -8,11 +9,13 @@ const Word = (props) => {
         wordAction
     } = props;
 
+    const words = useSelector(state => state.minusWords)
+    const included = words.includes(name)
 
     return (
         <div
             onClick={onClicked(name)}
-            className='minus-word'
+            className={included ? 'red minus-word' : 'minus-word'}
         >
             {name}
         </div>
