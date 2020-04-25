@@ -3,14 +3,14 @@ import { connect } from "react-redux";
 import { addText } from "../../actions";
 import {Textarea, Button} from '../../components/common';
 import SelectMinusWords from "../../components/SelectMinusWords";
-import SelectedMinusWords from "../../components/SelectedMinusWords";
 import './index.scss';
 
 class Home extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            text: []
+            text: [],
+            result: []
         };
     }
     handleChange = (e) => {
@@ -20,11 +20,6 @@ class Home extends Component {
         });
     };
     collectWords = () => {
-        // let result = this.state.text.filter((line) => {
-        //     if (line.trim()) {
-        //         return line.trim()
-        //     }
-        // })
         let result = []
         for (let i of this.state.text) {
             let item = i.trim()
@@ -32,9 +27,36 @@ class Home extends Component {
                 result.push(item)
             }
         }
-        console.log(result)
         this.props.dispatch(addText(result))
-    };
+    }
+
+    selectMinusWords = () => {
+        this.setState({
+            result: []
+        })
+        const minusWords = [...this.props.state.minusWords, ...this.props.state.customMinusWords]
+        let indexes = []
+        let result = []
+        // const result = this.state.props.text.filter(line => !minusWords.includes(line))
+        for (const [index, value] of this.props.state.text.entries()) {
+            let array1= value.split(' ')
+            let array2= minusWords
+
+            function findCommonElements3(arr1, arr2) {
+                return arr1.some(item => arr2.includes(item))
+            }
+
+            if(!findCommonElements3(array1, array2)) {
+                indexes.push(index)
+            }
+        }
+        for (let i of indexes) {
+            result.push(this.props.state.text[i])
+        }
+        this.setState({
+            result: result
+        })
+    }
 
     render() {
         let isDisable = !this.state.text
@@ -57,6 +79,19 @@ class Home extends Component {
                 </div>
                 <div className="wrapper">
                     <SelectMinusWords action="remove" textarea={true}/>
+                </div>
+                <div className="wrapper">
+                    <fieldset>
+                        <legend>Минус фразы</legend>
+                        <Textarea
+                            title='test'
+                            payload={this.state.result}
+                        />
+                        <Button
+                            onClick={this.selectMinusWords}
+                            name='собрать ключевые фразы'
+                        />
+                    </fieldset>
                 </div>
             </div>
 

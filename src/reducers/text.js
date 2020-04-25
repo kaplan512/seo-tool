@@ -16,7 +16,6 @@ export const collectMinusReducer = (state = [], action) => {
                 state = [...state, action.payload]
             }
             return state;
-            break;
         case 'REMOVE_MINUS_WORD':
             if (state.includes(action.payload)) {
                 let copy = [...state]
@@ -27,7 +26,24 @@ export const collectMinusReducer = (state = [], action) => {
                 return state;
             }
             return state;
-            break;
+        default:
+            return state;
+    }
+}
+
+export const addCustomMinusWordReducer = (state = [], action) => {
+    switch (action.type) {
+        case 'ADD_CUSTOM_MINUS_WORD':
+            return state = action.payload;
+        default:
+            return state;
+    }
+}
+
+export const addPhraseWordReducer = (state = [], action) => {
+    switch (action.type) {
+        case 'ADD_PHRASE_WORD':
+            return state = action.payload;
         default:
             return state;
     }

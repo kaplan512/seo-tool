@@ -5,16 +5,21 @@ import { useSelector } from 'react-redux'
 const Word = (props) => {
     const {
         onClicked,
-        name,
-        wordAction
+        name
     } = props;
 
-    const words = useSelector(state => state.minusWords)
+    const words = [...useSelector(state => state.minusWords), ...useSelector(state => state.customMinusWords)]
     const included = words.includes(name)
+
+    function testFunc (e) {
+        console.log({e})
+        // e = e || window.event;
+    }
 
     return (
         <div
-            onClick={onClicked(name)}
+            onClick={onClicked(name, included)}
+            // onClick={testFunc}
             className={included ? 'red minus-word' : 'minus-word'}
         >
             {name}
@@ -24,8 +29,7 @@ const Word = (props) => {
 
 Word.propTypes = {
     onClicked: PropTypes.func,
-    name: PropTypes.string,
-    wordAction: PropTypes.string
+    name: PropTypes.string
 };
 
 export {Word};

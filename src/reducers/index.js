@@ -1,13 +1,12 @@
-import counterReducer from "./counter"
-import loggedReducer from "./islogged"
-import {textReducer, collectMinusReducer} from "./text"
+import {textReducer, collectMinusReducer, addCustomMinusWordReducer} from "./text"
+import Home from './Home';
 import {combineReducers} from "redux"
 
 const allReducers = combineReducers({
-    counter: counterReducer,
-    loggedReducer,
     text: textReducer,
-    minusWords: collectMinusReducer
+    minusWords: collectMinusReducer,
+    customMinusWords: addCustomMinusWordReducer,
+    home: Home
 })
 
 export default allReducers
