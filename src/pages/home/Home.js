@@ -39,8 +39,8 @@ class Home extends Component {
         let result = []
         // const result = this.state.props.text.filter(line => !minusWords.includes(line))
         for (const [index, value] of this.props.state.text.entries()) {
-            let array1= value.split(' ')
-            let array2= minusWords
+            let array1 = value.split(' ')
+            let array2 = minusWords
 
             function findCommonElements3(arr1, arr2) {
                 return arr1.some(item => arr2.includes(item))

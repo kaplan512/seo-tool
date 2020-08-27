@@ -36,6 +36,9 @@ class SelectMinusWords extends Component {
             })
         }
     }
+    getPhrase = (phrase) => {
+        console.log({phrase})
+    }
     componentDidMount () {
         if (this.props.action === 'add') {
             document.addEventListener("keydown", this.pressAltStart, false);
@@ -50,7 +53,39 @@ class SelectMinusWords extends Component {
     }
 
     render() {
+        let minusPhrasesToRender = []
+
+        if (this.props.action !== 'add') {
+            const minusPhrases = this.props.state.minusPhrases.phrases
+            for (let i in minusPhrases) {
+                // let phrase = {
+                //     string: '',
+                //     location: {}
+                // }
+                const localText = this.props.state.text[i].split(' ')
+                for (let j of minusPhrases[i]) {
+                    let phrase = {
+                        string: '',
+                        location: {}
+                    }
+                    // console.log({i}, {j});
+                    phrase.location[i] = j
+                    for (let k of j) {
+                        // console.log(this.props.state.text, localText, j)
+                        phrase.string = phrase.string + localText[k] + ' '
+                        // phrase.string = phrase.string.trim()
+                        // phrase.location[i] = j
+                    }
+                    // console.log({phrase});
+                    minusPhrasesToRender.push(phrase);
+                }
+                // minusPhrasesToRender.push(phrase);
+                // console.log({i}, minusPhrases[i]);
+            }
+            // console.log({minusPhrasesToRender})
+        }
         const lines = this.props.action === 'add' ? this.props.state.text : this.props.state.minusWords
+        const minusPhraseStrings = Object.keys(this.props.state.minusPhrases.phrases)
         // let testArr = []
         // let localMinusWords = [...this.props.state.minusWords, ...this.props.state.customMinusWords]
         const linesToRender = lines.map((item, index) => {
@@ -62,12 +97,15 @@ class SelectMinusWords extends Component {
             //         return item.includes(letter)
             //     })
             // }
+            const havePhrase = minusPhraseStrings.includes(index.toString())
+
             return <WordString
                 key={index}
                 index={index}
                 line={item}
                 action={this.props.action}
                 altPressed={this.state.altPressed}
+                havePhrase={havePhrase}
             />
         })
         // console.log({testArr})

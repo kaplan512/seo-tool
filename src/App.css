@@ -37,12 +37,23 @@
   }
 }
 
-.red {
-  color: red;
-  background: lightpink;
-}
 .minus-word {
   margin: 2px;
   padding: 5px 10px;
   border-radius: 15px;
+  box-sizing: border-box;
+}
+.green {
+  color: black;
+  background: lightgreen;
+}
+.green-active {
+  border: 1px dotted green;
+}
+.red {
+  color: red;
+  background: lightpink;
+}
+.active-string-phrase {
+  background: lightcyan;
 }

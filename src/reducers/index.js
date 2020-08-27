@@ -1,12 +1,11 @@
-import {textReducer, collectMinusReducer, addCustomMinusWordReducer} from "./text"
-import Home from './Home';
+import {textReducer, collectMinusReducer, addCustomMinusWordReducer, addPhraseWordReducer} from "./textReducer"
 import {combineReducers} from "redux"
 
 const allReducers = combineReducers({
     text: textReducer,
     minusWords: collectMinusReducer,
     customMinusWords: addCustomMinusWordReducer,
-    home: Home
+    minusPhrases: addPhraseWordReducer,
 })
 
 export default allReducers

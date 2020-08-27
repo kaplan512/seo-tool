@@ -28,18 +28,8 @@ export const addPhraseWord = (word) => {
         payload: word
     }
 }
-
-export const testWord = (word) => {
-    console.log({word})
+export const pushPhraseWord = () => {
     return {
-        type: 'TEST_ADD',
-        payload: word
-    }
-}
-export const testWordSec = (word) => {
-    console.log({word})
-    return {
-        type: 'TEST_REMOVE',
-        payload: word
+        type: 'PUSH_PHRASE_WORD'
     }
 }
