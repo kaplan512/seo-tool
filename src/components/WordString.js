@@ -58,7 +58,7 @@ class WordString extends Component {
         // Популярный пример (не забудьте сравнить пропсы):
         if (this.props.altPressed !== prevProps.altPressed) {
             // console.log('test', this.props.state.minusPhrases.phrase)
-            // this.props.dispatch(pushPhraseWord())
+            this.props.dispatch(pushPhraseWord())
         }
     }
 
