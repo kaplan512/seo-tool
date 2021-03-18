@@ -1,132 +1,148 @@
-// const initialState = {
-//     text: [],
-// };
-// export const textReducer = (state = initialState, action) => {
-//     switch (action.type) {
-//         case 'ADD_TEXT':
-//             return {
-//                 ...state,
-//                 // allEvents: localEvents,
-//                 text: action.payload
-//             };
-//         // return state = action.payload;
-//         default:
-//             return state;
-//     }
-// }
-
-export const textReducer = (state = [], action) => {
+const initialState = {
+    text: [],
+    minusPhrases: {
+        phrases: {},
+        phrase: [],
+        minusPhrasesWords: []
+    },
+    minusWords: [],
+    customMinusWords: []
+};
+export const textReducer = (state = initialState, action) => {
+    let minusPhrases = {...state.minusPhrases}
+    let minusWords = [...state.minusWords]
     switch (action.type) {
         case 'ADD_TEXT':
-            return state = action.payload;
-        default:
-            return state;
-    }
-}
-
-export const collectMinusReducer = (state = [], action) => {
-    switch (action.type) {
-        case 'ADD_MINUS_WORD':
-            if (state.includes(action.payload)) {
-                return state;
-            } else {
-                state = [...state, action.payload]
-            }
-            return state;
-        case 'REMOVE_MINUS_WORD':
-            if (state.includes(action.payload)) {
-                let copy = [...state]
-                const index = state.indexOf(action.payload)
-                copy.splice(index, 1)
-                state = [...copy]
-            } else {
-                return state;
-            }
-            return state;
-        default:
-            return state;
-    }
-}
-
-export const addCustomMinusWordReducer = (state = [], action) => {
-    switch (action.type) {
-        case 'ADD_CUSTOM_MINUS_WORD':
-            return state = action.payload;
-        default:
-            return state;
-    }
-}
-
-export const addPhraseWordReducer = (state = {}, action) => {
-    let copy = {...state}
-    if (!copy.phrases) {
-        copy.phrases = {}
-    }
-    if (!copy.phrase) {
-        copy.phrase = []
-    }
-    if (!copy.minusPhrasesWords) {
-        copy.minusPhrasesWords = []
-    }
-    switch (action.type) {
+            return {
+                ...state,
+                text: action.payload
+            };
         case 'ADD_PHRASE_WORD':
-            if (copy.index === action.payload.index) {
-                copy.phrase.push(action.payload.wordIndex)
-                return state = copy
+            if (minusPhrases.index === action.payload.index) {
+                minusPhrases.phrase.push(action.payload.wordIndex)
+                // return state = minusPhrases
+                return {
+                    ...state,
+                    minusPhrases: {...minusPhrases}
+                };
             } else {
-                if (copy.index) {
-                    if (copy.phrase.length > 1) {
-                        let indexLocal = copy.index.toString()
-                        if (!copy.phrases[indexLocal]) {
-                            copy.phrases[indexLocal] = []
-                            copy.phrases[indexLocal].push(copy.phrase)
+                if (minusPhrases.index) {
+                    if (minusPhrases.phrase.length > 1) {
+                        let indexLocal = minusPhrases.index.toString()
+                        if (!minusPhrases.phrases[indexLocal]) {
+                            minusPhrases.phrases[indexLocal] = []
+                            minusPhrases.phrases[indexLocal].push(minusPhrases.phrase)
                         } else {
-                            copy.phrases[indexLocal].push(copy.phrase)
+                            minusPhrases.phrases[indexLocal].push(minusPhrases.phrase)
                         }
                     }
                 }
-                copy.phrase = []
-                copy.phrase.push(action.payload.wordIndex)
-                copy.index = action.payload.index
-                copy.wordIndex = action.payload.wordIndex
-                return state = copy
+                minusPhrases.phrase = []
+                minusPhrases.phrase.push(action.payload.wordIndex)
+                minusPhrases.index = action.payload.index
+                minusPhrases.wordIndex = action.payload.wordIndex
+                return {
+                    ...state,
+                    minusPhrases: minusPhrases
+                };
             }
         case 'PUSH_PHRASE_WORD':
-            if (copy.phrase.length > 1) {
-                let indexLocal = copy.index.toString()
-                console.log('copy phrase', copy.phrase)
-                const arraysMatch = function (arr1, arr2) {
-
-                    if (arr1.length !== arr2.length) return false;
-
-                    for (let i = 0; i < arr1.length; i++) {
-                        if (arr1[i] !== arr2[i]) return false;
-                    }
-
-                    return true;
-
-                };
-                if (!copy.phrases[indexLocal]) {
-                    copy.phrases[indexLocal] = []
-                    copy.phrases[indexLocal].push(copy.phrase)
-                } else {
-                    for (let i in copy.phrases) {
-
-                        // if (arraysMatch(i, copy.phrase)) {
-                        //     console.log('there are the same ')
-                        //     break
-                        // }
-                    }
-                    copy.phrases[indexLocal].push(copy.phrase)
+            if (minusPhrases.phrase.length === 1 || minusPhrases.phrase.length <= 0) {
+                minusPhrases.index = null
+                minusPhrases.phrase = []
+                minusPhrases.wordIndex = null
+                return {
+                    ...state,
+                    minusPhrases: minusPhrases
                 }
             }
-            copy.index = null
-            copy.phrase = []
-            copy.wordIndex = null
-            return state = copy
+
+            const stringIndex = minusPhrases.index
+            let neededString = []
+            let neededWord = ''
+            if (state.text.length) {
+                neededString = state.text[stringIndex].split(' ')
+                for (let i of minusPhrases.phrase) {
+                    neededWord += `${neededString[i]} `
+                }
+                neededWord = neededWord.trim();
+            }
+            let minusPhrasesWordsLocal = [...minusPhrases.minusPhrasesWords]
+            if (!minusPhrasesWordsLocal.includes(neededWord)) {
+                minusPhrasesWordsLocal.push(neededWord)
+                minusPhrases.minusPhrasesWords = minusPhrasesWordsLocal
+            } else {
+                minusPhrases.index = null
+                minusPhrases.phrase = []
+                minusPhrases.wordIndex = null
+                return {
+                    ...state,
+                    minusPhrases: minusPhrases
+                };
+            }
+
+            if (minusPhrases.phrase.length > 1) {
+                let indexLocal = minusPhrases.index.toString()
+                if (!minusPhrases.phrases[indexLocal]) {
+                    minusPhrases.phrases[indexLocal] = []
+                }
+                const resultItem = {
+                    string: neededWord,
+                    indexes: minusPhrases.phrase
+                }
+                // minusPhrases.phrases[indexLocal].push(minusPhrases.phrase)
+                minusPhrases.phrases[indexLocal].push(resultItem)
+
+            }
+            if (!Object.keys(minusPhrases.phrases).length) {
+                return {
+                    ...state,
+                    minusPhrases: minusPhrases
+                };
+            }
+
+            minusPhrases.index = null
+            minusPhrases.phrase = []
+            minusPhrases.wordIndex = null
+            return {
+                ...state,
+                minusPhrases: minusPhrases
+            };
+        case 'ADD_MINUS_WORD':
+            if (minusWords.includes(action.payload)) {
+                return state;
+            } else {
+                minusWords = [...minusWords, action.payload]
+            }
+            return {
+                ...state,
+                minusWords: minusWords
+            };
+        case 'REMOVE_MINUS_WORD':
+            if (minusWords.includes(action.payload)) {
+                const index = minusWords.indexOf(action.payload)
+                minusWords.splice(index, 1)
+            } else {
+                return state;
+            }
+            return {
+                ...state,
+                minusWords: minusWords
+            };
+        case 'REMOVE_PHRASE':
+            minusPhrases.phrases[action.payload.stringIndex].splice(
+                minusPhrases.phrases[action.payload.stringIndex].findIndex(
+                    x => x.string === action.payload.phraseObj.string),
+                1)
+            if (!minusPhrases.phrases[action.payload.stringIndex].length) {
+                delete minusPhrases.phrases[action.payload.stringIndex]
+            }
+            return {
+                ...state,
+                minusPhrases: {...minusPhrases}
+            };
+
         default:
-            return state = copy;
+            return state;
     }
 }
-
-// export default {textReducer, collectMinusReducer}

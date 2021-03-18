@@ -12,7 +12,7 @@ const Word = (props) => {
         activePhraseWord
     } = props;
 
-    const words = [...useSelector(state => state.minusWords), ...useSelector(state => state.customMinusWords)]
+    const words = [...useSelector(state => state.textReducer.minusWords), ...useSelector(state => state.textReducer.customMinusWords)]
     const included = words.includes(name)
 
     function testFunc (e) {
@@ -20,11 +20,13 @@ const Word = (props) => {
         // e = e || window.event;
     }
 
-    const minusPhraseIndexes = useSelector(state => state.minusPhrases.phrases[lineIndex])
     let isPhraseIncludes = false
-    if (minusPhraseIndexes && minusPhraseIndexes.length) {
-        for (let i of minusPhraseIndexes) {
-            if (i.includes(wordIndex)) {
+
+    const localMinusPhrases = useSelector(state => state.textReducer.minusPhrases.phrases)
+
+    if (localMinusPhrases[lineIndex]) {
+        for (let i of localMinusPhrases[lineIndex]) {
+            if (i.indexes.includes(wordIndex)) {
                 isPhraseIncludes = true
                 break
             }

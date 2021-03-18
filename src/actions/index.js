@@ -33,3 +33,9 @@ export const pushPhraseWord = () => {
         type: 'PUSH_PHRASE_WORD'
     }
 }
+export const removePhrase = (payload) => {
+    return {
+        type: 'REMOVE_PHRASE',
+        payload: payload
+    }
+}

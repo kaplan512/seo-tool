@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {Word} from './MinusWord'
-import {addMinusWord, removeMinusWord, addPhraseWord, pushPhraseWord} from "../actions";
+import {addMinusWord, removeMinusWord, addPhraseWord, removePhrase} from "../actions";
 import classNames from "classnames";
 
 class WordString extends Component {
@@ -12,24 +12,10 @@ class WordString extends Component {
         }
     }
     selectWord = (word, included, wordIndex) => () => {
-        console.log('select word');
         if (this.props.altPressed) {
             const index = this.props.index
-            const havePhrase = Object.keys(this.props.state.minusPhrases.phrases).includes(index.toString())
-            const activeString = this.props.state.minusPhrases.index
-            const activeWords = this.props.state.minusPhrases.phrase
-            // if (havePhrase) {
-            //     console.log('you can not add phrase to the same string')
-            //     this.props.dispatch(pushPhraseWord())
-            // } else if (activeString === index && activeWords.includes(wordIndex)) {
-            //     console.log('you can not add the same word to phrase')
-            // } else {
-            //     let item = {
-            //         index,
-            //         wordIndex
-            //     }
-            //     this.props.dispatch(addPhraseWord(item))
-            // }
+            const activeString = this.props.minusPhrases.index
+            const activeWords = this.props.minusPhrases.phrase
             if (activeString === index && activeWords.includes(wordIndex)) {
                 console.log('you can not add the same word to phrase')
             } else {
@@ -41,12 +27,9 @@ class WordString extends Component {
             }
         } else {
             if (this.props.action === 'add') {
-                this.props.dispatch(pushPhraseWord())
-                // this.props.dispatch(testWord(word))
                 this.props.dispatch(addMinusWord(word))
                 if (included) {
                     this.props.dispatch(removeMinusWord(word))
-                    // this.props.dispatch(testWordSec(word))
                 }
             } else {
                 this.props.dispatch(removeMinusWord(word))
@@ -54,41 +37,36 @@ class WordString extends Component {
         }
     }
 
-    componentDidUpdate(prevProps) {
-        // Популярный пример (не забудьте сравнить пропсы):
-        if (this.props.altPressed !== prevProps.altPressed) {
-            // console.log('test', this.props.state.minusPhrases.phrase)
-            this.props.dispatch(pushPhraseWord())
+    removePhrase = () => () => {
+        console.log('phrase remove', this.props.phraseObj, this.props.stringIndex)
+        let payload = {
+            stringIndex: this.props.stringIndex,
+            phraseObj: this.props.phraseObj
         }
+        this.props.dispatch(removePhrase(payload))
     }
 
     render() {
-        const lines = this.props.line.split(' ')
+        const lines = !this.props.noSplit ? this.props.line.split(' ') : [...this.props.line]
         let activeLinePhrase = false
 
-        const minusPhrases = this.props.state.minusPhrases.phrases
-        const text = this.props.state.text
+        const minusPhrases = this.props.minusPhrases.phrases
         let minusPhrasesToSearch = []
         for (let i in minusPhrases) {
-            let minusPhrase = []
-            let string = text[i].split(' ')
             for (let j of minusPhrases[i]) {
-                for (let k of j) {
-                    minusPhrase.push(string[k])
-                }
+                minusPhrasesToSearch.push(j.string)
             }
-            minusPhrasesToSearch.push(minusPhrase.join(' ').trim())
         }
         for (let substr of minusPhrasesToSearch) {
-            if (this.props.line.includes(substr)) {
+            if (!this.props.noSplit ? this.props.line.includes(substr) : this.props.line.includes(substr)) {
                 activeLinePhrase = true
                 break
             }
         }
 
-        const words = lines.map((item, wordIndex) => {
-            const activePhraseString = this.props.state.minusPhrases.index === this.props.index
-            const activePhraseWord = activePhraseString && this.props.state.minusPhrases.phrase.includes(wordIndex)
+        const words = !this.props.noSplit ? lines.map((item, wordIndex) => {
+            const activePhraseString = this.props.minusPhrases.index === this.props.index
+            const activePhraseWord = activePhraseString && this.props.minusPhrases.phrase.includes(wordIndex)
 
             return <Word
                 onClicked={this.selectWord}
@@ -98,18 +76,29 @@ class WordString extends Component {
                 lineIndex={this.props.index}
                 activePhraseWord={activePhraseWord}
             />
-        })
+        }) : <Word
+                onClicked={this.removePhrase}
+                name={this.props.line}
+                // key={wordIndex}
+                // wordIndex={wordIndex}
+                // lineIndex={this.props.index}
+                // activePhraseWord={activePhraseWord}
+            />
 
-        let minusWords = [...this.props.state.minusWords, ...this.props.state.customMinusWords]
-        let isActive = Object.keys(this.props.state.minusPhrases.phrases).includes(this.props.index.toString())
-        if (!isActive) {
-            for (let i of minusWords) {
-                if (lines.includes(i)) {
-                    isActive = true
-                    break
+        let minusWords = [...this.props.minusWords, ...this.props.customMinusWords]
+        let isActive = false
+        if (!this.props.noSplit) {
+            isActive = Object.keys(this.props.minusPhrases.phrases).includes(this.props.index.toString())
+            if (!isActive) {
+                for (let i of minusWords) {
+                    if (lines.includes(i)) {
+                        isActive = true
+                        break
+                    }
                 }
             }
         }
+
         let activeString = false
         if (this.props.action === 'add' && isActive) {
             activeString = true
@@ -129,7 +118,10 @@ class WordString extends Component {
 };
 
 const mapStateToProps = state => ({
-    state
+    text: state.textReducer.text,
+    minusPhrases: state.textReducer.minusPhrases,
+    minusWords: state.textReducer.minusWords,
+    customMinusWords: state.textReducer.customMinusWords,
 })
 
 export default connect(mapStateToProps)(WordString)

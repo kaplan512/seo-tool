@@ -2,7 +2,7 @@ import React, {Component} from "react"
 import { connect } from "react-redux";
 import WordString from './WordString'
 import {Button, Textarea} from "./common";
-import {addCustomMinusWOrd} from "../actions";
+import {addCustomMinusWOrd, pushPhraseWord} from "../actions";
 
 class SelectMinusWords extends Component {
     constructor(props) {
@@ -33,11 +33,8 @@ class SelectMinusWords extends Component {
         if(event.key === 'Alt') {
             this.setState({
                 altPressed: false
-            })
+            }, () => this.props.dispatch(pushPhraseWord()))
         }
-    }
-    getPhrase = (phrase) => {
-        console.log({phrase})
     }
     componentDidMount () {
         if (this.props.action === 'add') {
@@ -56,48 +53,39 @@ class SelectMinusWords extends Component {
         let minusPhrasesToRender = []
 
         if (this.props.action !== 'add') {
-            const minusPhrases = this.props.state.minusPhrases.phrases
+            let minusPhrasesLocal = []
+            const minusPhrases = this.props.minusPhrases.phrases
+            let localId = 0
             for (let i in minusPhrases) {
-                // let phrase = {
-                //     string: '',
-                //     location: {}
-                // }
-                const localText = this.props.state.text[i].split(' ')
                 for (let j of minusPhrases[i]) {
-                    let phrase = {
-                        string: '',
-                        location: {}
-                    }
-                    // console.log({i}, {j});
-                    phrase.location[i] = j
-                    for (let k of j) {
-                        // console.log(this.props.state.text, localText, j)
-                        phrase.string = phrase.string + localText[k] + ' '
-                        // phrase.string = phrase.string.trim()
-                        // phrase.location[i] = j
-                    }
-                    // console.log({phrase});
-                    minusPhrasesToRender.push(phrase);
+                    // minusPhrasesLocal.push(j);
+                    minusPhrasesToRender.push(
+                        <WordString
+                            line={j.string}
+                            phraseObj={j}
+                            stringIndex={i}
+                            action={this.props.action}
+                            altPressed={this.state.altPressed}
+                            noSplit={true}
+                            key={localId}
+                        />
+                    );
+                    localId++
                 }
-                // minusPhrasesToRender.push(phrase);
-                // console.log({i}, minusPhrases[i]);
             }
-            // console.log({minusPhrasesToRender})
+            // minusPhrasesToRender = minusPhrasesLocal.map((item, index) => {
+            //     return <WordString
+            //         key={index}
+            //         index={index}
+            //         line={item}
+            //         action={this.props.action}
+            //         altPressed={this.state.altPressed}
+            //         noSplit={true}
+            //     />
+            // })
         }
-        const lines = this.props.action === 'add' ? this.props.state.text : this.props.state.minusWords
-        const minusPhraseStrings = Object.keys(this.props.state.minusPhrases.phrases)
-        // let testArr = []
-        // let localMinusWords = [...this.props.state.minusWords, ...this.props.state.customMinusWords]
+        const lines = this.props.action === 'add' ? this.props.text : this.props.minusWords
         const linesToRender = lines.map((item, index) => {
-            // if (this.props.action === 'add') {
-            //     testArr = localMinusWords.filter((letter) => {
-            //         if (item.includes(letter)) {
-            //             console.log({index})
-            //         }
-            //         return item.includes(letter)
-            //     })
-            // }
-            const havePhrase = minusPhraseStrings.includes(index.toString())
 
             return <WordString
                 key={index}
@@ -105,16 +93,17 @@ class SelectMinusWords extends Component {
                 line={item}
                 action={this.props.action}
                 altPressed={this.state.altPressed}
-                havePhrase={havePhrase}
             />
         })
-        // console.log({testArr})
         const title = this.props.action === 'add' ? 'Кликай по минус словам' : 'Минус слова'
         return (
             <fieldset>
                 <legend>{title} {this.props.action}</legend>
                 <div className='words-wrapper-block'>
                     {linesToRender}
+                </div>
+                <div>
+                    {this.props.action !== 'add' ? minusPhrasesToRender : null}
                 </div>
                 <div>
                     {this.props.textarea  && (
@@ -135,7 +124,10 @@ class SelectMinusWords extends Component {
 }
 
 const mapStateToProps = state => ({
-    state
+    // state
+    text: state.textReducer.text,
+    minusPhrases: state.textReducer.minusPhrases,
+    minusWords: state.textReducer.minusWords,
 })
 
 export default connect(mapStateToProps)(SelectMinusWords)
